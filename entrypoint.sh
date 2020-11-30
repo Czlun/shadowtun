@@ -37,7 +37,7 @@ client() {
     }
 
     check() {
-    	if [ "$1" != "ss" -a "$1" != "kcptun" ]; then
+        if [ "$1" != "ss" -a "$1" != "kcptun" ]; then
             print_usage
             return 1
         fi
@@ -53,8 +53,10 @@ client() {
         cat /etc/privoxy/config.bak > /etc/privoxy/config
         rm -f /etc/privoxy/config.bak
         sed -i '/listen-address/d' /etc/privoxy/config
+        sed -i '/forward-socks5/d' /etc/privoxy/config
         echo "listen-address  0.0.0.0:${PRIVOXY_LOCAL_PORT}" >> /etc/privoxy/config
         echo "forward-socks5 / 127.0.0.1:${SS_LOCAL_PORT} ." >> /etc/privoxy/config
+        privoxy --no-daemon /etc/privoxy/config
     }
 
     run_kcptun() {
@@ -79,16 +81,18 @@ client() {
     ss() {
         export SS_SERVER_ADDR=${SERVER_ADDR}
         export SS_SERVER_PORT=${SERVER_PORT:-8388}
-        run_sslocal
+        run_sslocal &
+        run_privoxy
     }
 
     kcptun() {
         export SS_SERVER_ADDR=${KCPTUN_LOCAL_BIND}
         export SS_SERVER_PORT=${KCPTUN_LOCAL_PORT}
         export KCPTUN_SERVER_ADDR=${SERVER_ADDR}
-        export KCPTUN_TARGETSVC_PORT="${SERVER_PORT:-8388}"
+        export KCPTUN_SERVER_PORT="${SERVER_PORT:-8388}"
         run_kcptun &
-        run_sslocal
+        run_sslocal &
+        run_privoxy
     }
 
     #if [ "$1" = "ss" ]; then

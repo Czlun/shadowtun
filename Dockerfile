@@ -43,7 +43,8 @@ ENV PRIVOXY_LOCAL_PORT="2080"
 COPY ./client_linux_amd64 ./server_linux_amd64 ./entrypoint.sh /tmp/repo/
 
 RUN set -ex \
- && apk add --no-cache curl privoxy 
+ && apk add --no-cache curl privoxy \
+ && chown -R nobody:nobody /etc/privoxy/
 
 RUN set -ex \
  && ls -l /tmp/repo \
@@ -52,4 +53,4 @@ RUN set -ex \
 
 USER nobody
 
-CMD ["sh", "/usr/bin/entrypoint.sh"]
+ENTRYPOINT ["sh", "/usr/bin/entrypoint.sh"]
