@@ -37,7 +37,7 @@ client() {
     }
 
     check() {
-        if [ "$1" != "ss" -a "$1" != "kcptun" ]; then
+    	if [ "$1" != "ss" -a "$1" != "kcptun" ]; then
             print_usage
             return 1
         fi
@@ -77,14 +77,16 @@ client() {
     }
 
     ss() {
-    	export SS_SERVER_ADDR=${SERVER_ADDR}
-    	run_sslocal
+        export SS_SERVER_ADDR=${SERVER_ADDR}
+        export SS_SERVER_PORT=${SERVER_PORT:-8388}
+        run_sslocal
     }
 
     kcptun() {
-        export KCPTUN_SERVER_ADDR=${SERVER_ADDR}
         export SS_SERVER_ADDR=${KCPTUN_LOCAL_BIND}
         export SS_SERVER_PORT=${KCPTUN_LOCAL_PORT}
+        export KCPTUN_SERVER_ADDR=${SERVER_ADDR}
+        export KCPTUN_TARGETSVC_PORT="${SERVER_PORT:-8388}"
         run_kcptun &
         run_sslocal
     }
@@ -98,6 +100,7 @@ client() {
     #    export SS_SERVER_PORT=${KCPTUN_LOCAL_PORT}
     #fi
 
+    check "$@"
     "$@"
 }
 
