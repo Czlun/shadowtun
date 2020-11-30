@@ -1,7 +1,7 @@
 # Description
 - Base on shadowsocks/shadowsocks-libev
 - Integrated KCPTUN and shadowsocks-libev
-- shadowtun [github](https://github.com/Czlun/shadowtun-docker)
+- shadowtun [github](https://github.com/Czlun/shadowtun)
 
 ## ENV list
 
